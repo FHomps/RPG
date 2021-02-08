@@ -84,21 +84,21 @@ TileSet::TileSet(std::string const& name) {
 		return v;
 	};
 
-	auto getSubCoords = [this](sf::Vector2f coords, SubTile::SubPosition subPos) {
+	auto getTextureRect = [this](sf::Vector2f coords, SubTile::SubPosition subPos) {
 		float s = (float) tileSize;
 		sf::FloatRect rect = SubTile::subPosRects.at(subPos);
-		return SubTile::TextureCoords{
-			coords + s * sf::Vector2f(rect.left, rect.top),
-			coords + s * sf::Vector2f(rect.left + rect.width, rect.top),
-			coords + s * sf::Vector2f(rect.left, rect.top + rect.height),
-			coords + s * sf::Vector2f(rect.left + rect.width, rect.top + rect.height)
+		return sf::FloatRect {
+			coords.x + s * rect.left,
+			coords.y + s * rect.top,
+			s * rect.width,
+			s * rect.height
 		};
 	};
 
 	uint currentTileID = 0;
 	uint currentSubTileID = 0;
 
-	auto createSubTiles = [this, &getSubCoords, &currentSubTileID](TileInfo& t,
+	auto createSubTiles = [this, &getTextureRect, &currentSubTileID](TileInfo& t,
 										 std::vector<sf::Vector2f> const& coords,
 										 SubTile::Pattern pattern = SubTile::center,
 										 SubTile::SubPosition subPos = SubTile::full) {
@@ -110,7 +110,7 @@ TileSet::TileSet(std::string const& name) {
 			st.subPosition = subPos;
 			st.n_variants = coords.size();
 			st.variant = variant;
-			st.texCoords = getSubCoords(coords[variant], subPos);
+			st.textureRect = getTextureRect(coords[variant], subPos);
 			st.ID = currentSubTileID;
 			subTilesByID[currentSubTileID] = &st;
 			currentSubTileID++;

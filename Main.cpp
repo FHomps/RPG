@@ -6,7 +6,7 @@ int main() {
 	const int w_y = 900;
 
 	sf::RenderWindow window(sf::VideoMode(w_x, w_y), "Main window");
-	window.setFramerateLimit(60);
+	//window.setFramerateLimit(60);
 
 	TileSet const& set = TileSet::get("grasslands");
 	Scene s(set);
@@ -37,6 +37,22 @@ int main() {
 	FPSCounter.setOutlineThickness(2);
 	FPSCounter.setPosition(10, 0);
 
+
+	srand(6);
+
+	const int b_x = 3;
+	const int b_y = 2;
+	for (int x = b_x; x < n_x - b_x; x++) {
+		for (int y = b_y; y < n_y - b_y; y++) {
+			tool.use(x, y, height);
+		}
+	}
+
+	for (int x = 2; x < n_x; x+=3) {
+		for (int y = 2; y < n_y; y+=3) {
+			tool.use(x, y, height + 1 + rand() % 4);
+		}
+	}
 
 	auto start = std::chrono::steady_clock::now();
 	uint frames = 0;

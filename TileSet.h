@@ -32,13 +32,8 @@ struct SubTile {
 	} subPosition = SubPosition::full;
 
 	static const std::map<SubTile::SubPosition, sf::FloatRect> subPosRects;
-
-	struct TextureCoords {
-		sf::Vector2f topLeft;
-		sf::Vector2f topRight;
-		sf::Vector2f bottomLeft;
-		sf::Vector2f bottomRight;
-	} texCoords;
+	
+	sf::FloatRect textureRect;
 };
 
 struct TileInfo;

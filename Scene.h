@@ -16,43 +16,48 @@ public:
 private:
 	TileSet const& tileset;
 
-	class Chunk {
-	public:
+	struct Chunk {
 		struct TileCoords {
-			int x, y, subz;
+			int x, y, z, subz;
 
 			struct RenderOrderComparator {
 				inline bool operator()(TileCoords const& before, TileCoords const& after) const;
 			};
 		};
 
-		void setTile(Tile const& t, TileCoords coords);
-		Tile const* getTile(TileCoords coords) const;
-
-		sf::VertexBuffer const& getBuffer(float zOffset) const;
+		std::map<TileCoords, Tile, TileCoords::RenderOrderComparator> tiles;
 
 		static const int resolution = 8;
-
-	private:
-		std::map<TileCoords, Tile, TileCoords::RenderOrderComparator> tiles;
-		mutable sf::VertexBuffer buffer;
-		mutable bool shouldUpdateBuffer = false;
 	};
 
 	struct ChunkCoords {
-		int X, Y, z;
+		int X, Y;
 
-		static inline ChunkCoords fromTileCoords(int x, int y, int z);
+		static inline ChunkCoords fromTileCoords(int x, int y);
+		static inline ChunkCoords fromTileCoords(Chunk::TileCoords const& coords);
 
-		struct RenderOrderComparator {
-			using is_transparent = void;
+		struct Comparator {
 			inline bool operator()(ChunkCoords const& before, ChunkCoords const& after) const;
 		};
-
-		inline bool operator==(ChunkCoords const& right) const;
 	};
 
-	std::map<ChunkCoords, Chunk, ChunkCoords::RenderOrderComparator> chunks;
+	struct SpriteCoords {
+		float x, y, z;
+		int subz;
+
+		struct RenderOrderComparator {
+			inline bool operator()(SpriteCoords const& before, SpriteCoords const& after) const;
+		};
+	};
+
+	struct Sprite {
+		sf::FloatRect textureRect;
+		sf::FloatRect shapeRect;
+	};
+
+	std::map<ChunkCoords, Chunk, ChunkCoords::Comparator> chunks;
+
+	std::multimap<SpriteCoords, Sprite, SpriteCoords::RenderOrderComparator> currentSprites;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
